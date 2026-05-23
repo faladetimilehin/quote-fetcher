@@ -1,18 +1,76 @@
-# React + Vite
+# Quote Fetcher
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Complete Screenshot](complete.png)
 
-Currently, two official plugins are available:
+A small React + Vite app that fetches a random quote and provides a Twitter share button.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Important files**
+- `src/components/Quote.jsx` — main quote component (fetch logic, CORS fallback, fallback quote, author display).
+- `src/App.jsx` — app root that renders the `Quote` component.
+- `vite.config.js` — Vite config (add a dev proxy here for local CORS bypass if desired).
 
-## React Compiler
+## Features
+- Fetches quotes from the public `type.fit` API (random selection client-side).
+- CORS fallback retry via a public proxy for development convenience.
+- Local fallback quote when the API fails.
+- Share quotes on Twitter with a single click.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Quick start
 
-Note: This will impact Vite dev & build performances.
+Install dependencies:
 
-## Expanding the ESLint configuration
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Run the dev server:
+
+```bash
+npm run dev
+# open http://127.0.0.1:5173/
+```
+
+Build for production:
+
+```bash
+npm run build
+npm run preview
+```
+
+## CORS note (important)
+
+`https://type.fit/api/quotes` does not set CORS headers, so browsers will block direct frontend requests. The app includes a development fallback that retries via `https://api.allorigins.win/raw?url=` but this is unreliable and not recommended for production.
+
+Production-safe options:
+
+1. Add a server-side proxy or serverless function that fetches `type.fit` and returns the JSON with an `Access-Control-Allow-Origin` header (recommended).
+2. Host quotes on your own backend or include them in your build.
+
+Example Express proxy (deploy as server or serverless function):
+
+```js
+// server.js
+import express from 'express'
+import fetch from 'node-fetch'
+const app = express()
+
+app.get('/api/quotes', async (req, res) => {
+	const r = await fetch('https://type.fit/api/quotes')
+	const json = await r.json()
+	res.set('Access-Control-Allow-Origin', '*')
+	res.json(json)
+})
+
+app.listen(process.env.PORT || 3000)
+```
+
+## Customization
+- To change the quote source, edit `src/components/Quote.jsx` and update the `baseUrl` variable inside `getQuote()`.
+- To avoid public proxy usage in dev, add a Vite dev proxy in `vite.config.js` that forwards `/api/quotes` to `https://type.fit`.
+
+## Screenshot
+- The project root `complete.png` is used above as a full screenshot preview.
+
+---
+
+If you want, I can add a Vite dev proxy now or scaffold a serverless proxy for production. Which would you prefer?
