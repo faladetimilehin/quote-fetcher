@@ -70,7 +70,3 @@ app.listen(process.env.PORT || 3000)
 
 ## Screenshot
 - The project root `complete.png` is used above as a full screenshot preview.
-
----
-
-If you want, I can add a Vite dev proxy now or scaffold a serverless proxy for production. Which would you prefer?
