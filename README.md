@@ -4,6 +4,9 @@
 
 A small React + Vite app that fetches a random quote and provides a Twitter share button.
 
+- Live demo: https://faladetimilehin.github.io/quote-fetcher/
+- GitHub repo: https://github.com/faladetimilehin/quote-fetcher
+
 **Important files**
 - `src/components/Quote.jsx` — main quote component (fetch logic, CORS fallback, fallback quote, author display).
 - `src/App.jsx` — app root that renders the `Quote` component.
